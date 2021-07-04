@@ -7,6 +7,8 @@ import "gorm.io/gorm"
 // repository adalah penyimpanan...
 type Repository interface{
 	Save(user User)(User, error)
+	//buat cari email klo sudah terdaftar
+	FindByEmail(email string)(User, error)
 }
 
 
@@ -23,5 +25,16 @@ func (r *repository) Save(user User)(User, error){
 	if err != nil{
 		return user, err
 	}
+	return user, nil
+}
+
+//function cari email
+func (r *repository) FindByEmail(email string)(User, error){
+	var user User
+	err := r.db.Where("email = ?", email).Find(&user).Error
+	if err != nil {
+		return user, err
+	}
+
 	return user, nil
 }
