@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bwastartup/auth"
 	"bwastartup/handler"
 	"bwastartup/user"
 	"log"
@@ -22,10 +23,13 @@ import (
 	//userRepository ini memanggil / passing dari/ke repository
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
+	//JWT 
+	authService := auth.NewService()
+
 
 	//userService.SaveAvatar(1, "images/1-profile.png")
 
-	userHandler := handler.NewUserHandler(userService)
+	userHandler := handler.NewUserHandler(userService, authService)
 
 	router := gin.Default()
 	api := router.Group("/api/v1")
