@@ -26,7 +26,6 @@ import (
 	//JWT 
 	authService := auth.NewService()
 
-
 	//userService.SaveAvatar(1, "images/1-profile.png")
 
 	userHandler := handler.NewUserHandler(userService, authService)
