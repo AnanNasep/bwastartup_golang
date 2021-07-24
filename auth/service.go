@@ -9,7 +9,7 @@ import (
 
 type Service interface {
 	GenerateToken(userID int)(string, error)
-	ValidadateToken(token string)(*jwt.Token, error)
+	ValidateToken(token string)(*jwt.Token, error)
 }
 
 type jwtService struct{
@@ -36,7 +36,7 @@ func (s *jwtService) GenerateToken(userID int)(string, error){
 }
 
 //validasi token
-func (s *jwtService) ValidadateToken(encodedtoken string)(*jwt.Token, error){
+func (s *jwtService) ValidateToken(encodedtoken string)(*jwt.Token, error){
 	token, err := jwt.Parse(encodedtoken, func(token *jwt.Token)(interface{}, error){
 		_, ok := token.Method.(*jwt.SigningMethodHMAC)
 		if !ok {

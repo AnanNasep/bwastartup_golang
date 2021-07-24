@@ -172,8 +172,9 @@ func (h *userHandler) UploadAvatar(c *gin.Context){
 		return 	
 	}
 
-	//harusnya dapat dari JWT
-	userID := 1
+	// dapat dari JWT
+	currentUser := c.MustGet("CurrentUser").(user.User)
+	userID := currentUser.ID
 
 	//menentukan alamat penyimpanan gambar
 	//"images/%d-%s" maksudnya adalah, ketika user meng-upload gambar, namanya jadi ("IDuser-namagambar")	
@@ -188,8 +189,6 @@ func (h *userHandler) UploadAvatar(c *gin.Context){
 		c.JSON(http.StatusBadRequest, response)
 		return 	
 	}
-
-
 
 	_, err = h.userService.SaveAvatar(userID, path)
 	if err != nil {
