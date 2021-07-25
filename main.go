@@ -40,6 +40,10 @@ func main() {
 
 
 	router := gin.Default()
+	//buat akses gambar secara langsung
+	router.Static("/images", "./images")
+
+	//untuk gruping /api/v1
 	api := router.Group("/api/v1")
 
 	api.POST("/users", userHandler.RegisterUser)
