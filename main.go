@@ -6,7 +6,6 @@ import (
 	"bwastartup/handler"
 	"bwastartup/helper"
 	"bwastartup/user"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -31,15 +30,13 @@ func main() {
 	userService := user.NewService(userRepository)
 	//JWT 
 	authService := auth.NewService()
-
 	userHandler := handler.NewUserHandler(userService, authService)
 	
 	// campaign
 	campaignRepository := campaign.NewRepository(db)
 
 	campaignService := campaign.NewService(campaignRepository)
-	campaigns, _ := campaignService.FindCampaigns(16)
-	fmt.Println(len(campaigns))
+	campaignHandler := handler.NewCampaignHandler(campaignService)
 
 
 	router := gin.Default()
@@ -50,9 +47,11 @@ func main() {
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
 	//authMiddleware 
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
+	
+	api.GET("/campaigns", campaignHandler.GetCampaigns)
 	router.Run()
 }
-
+ 
 func authMiddleware(authService auth.Service, userService user.Service) gin.HandlerFunc{
 	return func (c *gin.Context){
 		//MIDLEWARE UPDATE
