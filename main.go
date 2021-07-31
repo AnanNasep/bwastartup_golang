@@ -31,12 +31,14 @@ func main() {
 	//JWT 
 	authService := auth.NewService()
 	userHandler := handler.NewUserHandler(userService, authService)
-	
+
 	// campaign
 	campaignRepository := campaign.NewRepository(db)
 
 	campaignService := campaign.NewService(campaignRepository)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
+
+
 
 
 	router := gin.Default()
@@ -52,9 +54,12 @@ func main() {
 	//authMiddleware 
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
 	
+	//ambil campaign
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
-	//campaign detail
+	//ambil campaign detail
 	api.GET("/campaigns/:id", campaignHandler.GetCampaign)
+	// input create campaign
+	api.POST("/campaigns", authMiddleware(authService, userService), campaignHandler.CreateCampaign)
 	router.Run()
 }
  
