@@ -5,6 +5,7 @@ import (
 	"bwastartup/campaign"
 	"bwastartup/handler"
 	"bwastartup/helper"
+	"bwastartup/transaction"
 	"bwastartup/user"
 	"log"
 	"net/http"
@@ -25,35 +26,33 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
+	//JWT 
+	authService := auth.NewService()
 	//userRepository ini memanggil / passing dari/ke repository
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
-	//JWT 
-	authService := auth.NewService()
 	userHandler := handler.NewUserHandler(userService, authService)
-
 	// campaign
 	campaignRepository := campaign.NewRepository(db)
-
 	campaignService := campaign.NewService(campaignRepository)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
-
-
-
+	//transaction
+	transactionRepository := transaction.NewRepository(db)
+	transactionService := transaction.NewService(transactionRepository, campaignRepository)
+	transactionHandler := handler.NewTransactionHandler(transactionService)
 
 	router := gin.Default()
+
 	//buat akses gambar secara langsung
 	router.Static("/images", "./images")
-
 	//untuk gruping /api/v1
 	api := router.Group("/api/v1")
 
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/sessions", userHandler.Login)
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
-	//authMiddleware 
+	//authMiddleware  authMiddleware(authService, userService)
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
-	
 	//ambil campaign
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
 	//ambil campaign detail
@@ -64,7 +63,8 @@ func main() {
 	api.PUT("/campaigns/:id", authMiddleware(authService, userService), campaignHandler.UpdatedCampaign)
 	//upload campaign image
 	api.POST("/campaign-images", authMiddleware(authService, userService), campaignHandler.UploadImage)
-	
+	//upload campaign image
+	api.GET("/campaigns/:id/transactions", authMiddleware(authService, userService), transactionHandler.GetCampaignTransactions)
 	router.Run()
 }
  
