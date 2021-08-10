@@ -9,6 +9,7 @@ import (
 
 
 type service struct {
+
 }
 
 type Service interface {
@@ -48,3 +49,4 @@ func (s *service) GetPaymentURL(transaction Transaction, user user.User) (string
 	//dapatkan redirect url
 	return snapTokenResp.RedirectURL, nil
 }
+

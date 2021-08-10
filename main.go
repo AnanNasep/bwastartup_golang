@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -38,13 +39,14 @@ func main() {
 	campaignService := campaign.NewService(campaignRepository)
 	campaignHandler := handler.NewCampaignHandler(campaignService)
 	//transaction
-	paymentService := payment.NewService()
 	transactionRepository := transaction.NewRepository(db)
+	paymentService := payment.NewService()
 	transactionService := transaction.NewService(transactionRepository, campaignRepository, paymentService)
 	transactionHandler := handler.NewTransactionHandler(transactionService)
 	
 	router := gin.Default()
-
+	//cors go get github.com/gin-contrib/cors
+	router.Use(cors.Default())
 	//buat akses gambar secara langsung
 	router.Static("/images", "./images")
 	//untuk gruping /api/v1
@@ -55,6 +57,8 @@ func main() {
 	api.POST("/email_checkers", userHandler.CheckEmailAvailability)
 	//authMiddleware  authMiddleware(authService, userService)
 	api.POST("/avatars", authMiddleware(authService, userService), userHandler.UploadAvatar)
+	//fetch user
+	api.POST("/users/fetch", authMiddleware(authService, userService), userHandler.FetchUser)
 	//ambil campaign
 	api.GET("/campaigns", campaignHandler.GetCampaigns)
 	//ambil campaign detail
@@ -71,6 +75,8 @@ func main() {
 	api.GET("/transactions", authMiddleware(authService, userService), transactionHandler.GetUserTransactions)
 	//input create transaction
 	api.POST("/transactions", authMiddleware(authService, userService), transactionHandler.CreateTransaction)
+	//ambil data notifikasi dari midtrans
+	api.POST("/transactions/transactions", transactionHandler.GetNotification)
 	router.Run()
 }
  

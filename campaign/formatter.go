@@ -51,9 +51,10 @@ type CampaignDetailFormatter struct{
 	Description			string					`json:"description"`
 	ImageURL			string					`json:"image_url"`
 	GoalAmount			int						`json:"goal_amount"`
-	CurrentAmount		int						`json:"current_amopunt"`
+	CurrentAmount		int						`json:"current_amount"`
 	UserID				int						`json:"user_id"`
 	Slug				string					`json:"slug"`
+	BackerCount			int						`json:"backer_count"`
 	Perks				[]string				`json:"perks"`
 	User				CampaignUserFormatter	`json:"user"` 	//ini definisi dari type yang bawah (CampaignUserFormatter)
 	Images				[]CampaignImageFormatter`json:"images"` //ini definisi dari type yang bawah (CampaignImageFormatter)
@@ -79,6 +80,7 @@ func FormatCampaignDetail(campaign Campaign) CampaignDetailFormatter{
 	campaignDetailFormatter.CurrentAmount = campaign.CurrentAmount
 	campaignDetailFormatter.UserID = campaign.UserID
 	campaignDetailFormatter.Slug = campaign.Slug
+	campaignDetailFormatter.BackerCount = campaign.BackerCount
 	campaignDetailFormatter.ImageURL = ""
 	//cek klo ada fotonya
 	if len(campaign.CampaignImages) > 0 {

@@ -15,7 +15,7 @@ type Campaign struct {
 	GoalAmount       int
 	CurrentAmount    int
 	Perks            string
-	BackerCount      string
+	BackerCount      int
 	Slug             string
 	CreatedAt        time.Time
 	UpdatedAt		 time.Time

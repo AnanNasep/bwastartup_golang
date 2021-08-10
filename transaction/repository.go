@@ -15,6 +15,8 @@ type Repository interface{
 	Save(transaction Transaction)(Transaction, error)
 	//update untuk midtrans
 	Update(transaction Transaction)(Transaction, error)
+	//ambil data notifikasi dari midtrans
+	GetByID(ID int) (Transaction, error)	
 }
 
 func NewRepository(db *gorm.DB) *repository{
@@ -60,3 +62,14 @@ func (r *repository) Update(transaction Transaction)(Transaction, error){
 
 	return transaction, nil
 }	
+
+//ambil data notifikasi dari midtrans
+func (r *repository) GetByID(ID int) (Transaction, error){
+	var transaction Transaction
+	err := r.db.Where("id = ?", ID).Find(&transaction).Error
+
+	if err != nil{
+		return transaction, err
+	}
+	return transaction, nil
+}
